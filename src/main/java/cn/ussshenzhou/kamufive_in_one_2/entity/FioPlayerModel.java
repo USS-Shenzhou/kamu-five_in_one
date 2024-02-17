@@ -1,6 +1,8 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
+import cn.ussshenzhou.kamufive_in_one_2.FioManager;
 import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
+import cn.ussshenzhou.kamufive_in_one_2.Part;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -9,8 +11,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,26 +21,26 @@ public class FioPlayerModel<T extends Player> extends EntityModel<T> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(FiveInOne.MOD_ID, "fio_player_model"), "main");
 
-    private final ModelPart Head;
-    private final ModelPart RightArmBody;
-    private final ModelPart RightArm;
-    private final ModelPart LeftArm;
-    private final ModelPart RightLeg;
-    private final ModelPart LeftLeg;
-    private final ModelPart LeftArmBody;
-    private final ModelPart LeftFootBody;
-    private final ModelPart RightFootBody;
+    private final ModelPart head;
+    private final ModelPart rightArmBody;
+    private final ModelPart rightArm;
+    private final ModelPart leftArm;
+    private final ModelPart rightLeg;
+    private final ModelPart leftLeg;
+    private final ModelPart leftArmBody;
+    private final ModelPart leftFootBody;
+    private final ModelPart rightFootBody;
 
     public FioPlayerModel(ModelPart root) {
-        this.Head = root.getChild("Head");
-        this.RightArmBody = root.getChild("RightArmBody");
-        this.RightArm = root.getChild("RightArm");
-        this.LeftArm = root.getChild("LeftArm");
-        this.RightLeg = root.getChild("RightLeg");
-        this.LeftLeg = root.getChild("LeftLeg");
-        this.LeftArmBody = root.getChild("LeftArmBody");
-        this.LeftFootBody = root.getChild("LeftFootBody");
-        this.RightFootBody = root.getChild("RightFootBody");
+        this.head = root.getChild("Head");
+        this.rightArmBody = root.getChild("RightArmBody");
+        this.rightArm = root.getChild("RightArm");
+        this.leftArm = root.getChild("LeftArm");
+        this.rightLeg = root.getChild("RightLeg");
+        this.leftLeg = root.getChild("LeftLeg");
+        this.leftArmBody = root.getChild("LeftArmBody");
+        this.leftFootBody = root.getChild("LeftFootBody");
+        this.rightFootBody = root.getChild("RightFootBody");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -85,14 +85,28 @@ public class FioPlayerModel<T extends Player> extends EntityModel<T> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        RightArmBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        RightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        LeftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        RightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        LeftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        LeftArmBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        LeftFootBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        RightFootBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.HEAD, head);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_ARM, rightArmBody, rightArm);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_ARM, leftArmBody, leftArm);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_FOOT, rightFootBody, rightLeg);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_FOOT, leftFootBody, leftLeg);
+    }
+
+    private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, Part part, ModelPart... modelParts) {
+        var abstractClientPlayer = FioManager.Client.playerParts.get(part);
+        if (abstractClientPlayer == null) {
+            return;
+        }
+        var location = abstractClientPlayer.getSkinTextureLocation();
+        var vertexConsumer = multiBufferSource.getBuffer(this.renderType(location));
+        float alpha = part == FioManager.Client.part ? 0.15f : 1;
+        for (ModelPart modelPart : modelParts) {
+            poseStack.pushPose();
+            modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
+            poseStack.popPose();
+        }
     }
 }

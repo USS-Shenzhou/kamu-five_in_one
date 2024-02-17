@@ -39,24 +39,7 @@ public class SelectPartCommand {
     }
 
     private static int setPart(CommandContext<CommandSourceStack> commandContext, Part part) {
-        var player = FioManager.getOrCreateMainPlayer(commandContext.getSource().getPlayer());
-        switch (part) {
-            case HEAD -> {
-
-            }
-            case LEFT_ARM -> {
-
-            }
-            case RIGHT_ARM -> {
-
-            }
-            case LEFT_FOOT -> {
-
-            }
-            case RIGHT_FOOT -> {
-
-            }
-        }
+        FioManager.selectPart(commandContext.getSource(), part);
         return Command.SINGLE_SUCCESS;
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -19,12 +20,13 @@ public class FioPlayerServer extends ServerPlayer {
         super(pServer, pLevel, pGameProfile);
     }
 
-    public static FioPlayerServer create(ServerLevel level, double x, double y, double z) {
+    public static FioPlayerServer create(ServerPlayer player, ServerLevel level, double x, double y, double z) {
         MinecraftServer server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
         UUID uuid = UUID.randomUUID();
         var profile = new CustomGameProfile(uuid, FioManager.NAME);
         FioPlayerServer falsePlayer = new FioPlayerServer(server, level, profile);
         //falsePlayer.connection = new ServerGamePacketListenerImpl(server, new FakeConnection(), falsePlayer, CommonListenerCookie.createInitial(profile));
+        falsePlayer.connection = player.connection;
         falsePlayer.setPos(x, y, z);
         return falsePlayer;
     }

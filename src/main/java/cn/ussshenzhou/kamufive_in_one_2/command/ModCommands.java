@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
  * @author USS_Shenzhou
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ModCommand {
+public class ModCommands {
 
     @SubscribeEvent
     public static void regCommand(RegisterCommandsEvent event) {
