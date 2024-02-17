@@ -6,8 +6,8 @@ package cn.ussshenzhou.kamufive_in_one_2;
 
 public enum Part {
     HEAD,
-    LEFT_HAND,
-    RIGHT_HAND,
+    LEFT_ARM,
+    RIGHT_ARM,
     LEFT_FOOT,
     RIGHT_FOOT
 }

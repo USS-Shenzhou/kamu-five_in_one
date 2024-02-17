@@ -13,12 +13,12 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderForgeListener {
 
-    private static FIOPlayerRenderer fioPlayerRenderer = null;
+    private static FioPlayerRenderer fioPlayerRenderer = null;
 
     @SubscribeEvent
     public static void onRenderPlayer(RenderPlayerEvent.Pre event) {
         if (fioPlayerRenderer == null) {
-            fioPlayerRenderer = (FIOPlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(event.getEntity().getType());
+            fioPlayerRenderer = (FioPlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(event.getEntity().getType());
         }
         event.setCanceled(true);
         var player = event.getEntity();

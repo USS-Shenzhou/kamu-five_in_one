@@ -14,11 +14,11 @@ public class RenderModListener {
 
     @SubscribeEvent
     public static void entityRendererRegistry(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityType.PLAYER, FIOPlayerRenderer::new);
+        event.registerEntityRenderer(EntityType.PLAYER, FioPlayerRenderer::new);
     }
 
     @SubscribeEvent
     public static void regLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(FIOPlayerModel.LAYER_LOCATION, FIOPlayerModel::createBodyLayer);
+        event.registerLayerDefinition(FioPlayerModel.LAYER_LOCATION, FioPlayerModel::createBodyLayer);
     }
 }

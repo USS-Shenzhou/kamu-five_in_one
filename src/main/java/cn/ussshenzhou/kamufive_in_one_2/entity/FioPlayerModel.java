@@ -8,13 +8,16 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 /**
  * @author USS_Shenzhou
  */
-public class FIOPlayerModel<T extends Player> extends EntityModel<T> {
+public class FioPlayerModel<T extends Player> extends EntityModel<T> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(FiveInOne.MOD_ID, "fio_player_model"), "main");
 
@@ -28,7 +31,7 @@ public class FIOPlayerModel<T extends Player> extends EntityModel<T> {
     private final ModelPart LeftFootBody;
     private final ModelPart RightFootBody;
 
-    public FIOPlayerModel(ModelPart root) {
+    public FioPlayerModel(ModelPart root) {
         this.Head = root.getChild("Head");
         this.RightArmBody = root.getChild("RightArmBody");
         this.RightArm = root.getChild("RightArm");

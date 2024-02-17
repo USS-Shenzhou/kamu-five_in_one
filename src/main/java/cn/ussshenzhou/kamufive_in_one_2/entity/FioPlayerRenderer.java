@@ -9,9 +9,9 @@ import net.minecraft.world.entity.player.Player;
 /**
  * @author USS_Shenzhou
  */
-public class FIOPlayerRenderer extends LivingEntityRenderer<Player, FIOPlayerModel<Player>> {
-    public FIOPlayerRenderer(EntityRendererProvider.Context context) {
-        super(context, new FIOPlayerModel<>(context.bakeLayer(FIOPlayerModel.LAYER_LOCATION)), 0.5f);
+public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerModel<Player>> {
+    public FioPlayerRenderer(EntityRendererProvider.Context context) {
+        super(context, new FioPlayerModel<>(context.bakeLayer(FioPlayerModel.LAYER_LOCATION)), 0.5f);
     }
 
     @Override

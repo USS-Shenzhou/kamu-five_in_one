@@ -7,9 +7,9 @@ import net.minecraft.client.player.AbstractClientPlayer;
 /**
  * @author USS_Shenzhou
  */
-public class FIOPlayer extends AbstractClientPlayer {
+public class FioPlayerClient extends AbstractClientPlayer {
 
-    public FIOPlayer(ClientLevel pClientLevel, GameProfile pGameProfile) {
+    public FioPlayerClient(ClientLevel pClientLevel, GameProfile pGameProfile) {
         super(pClientLevel, pGameProfile);
     }
 }

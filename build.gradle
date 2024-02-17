@@ -134,6 +134,7 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    mavenLocal()
 }
 
 dependencies {
@@ -149,7 +150,15 @@ dependencies {
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-
+    implementation fg.deobf("cn.ussshenzhou:t88:0.6.0-pre.0"){
+        exclude group: "net.minecraftforge", module: "forge"
+    }
+    annotationProcessor("cn.ussshenzhou:t88:0.6.0-pre.0") {
+        exclude group: "net.minecraftforge", module: "forge"
+    }
+    jarJar(group: 'ncn.ussshenzhou', name: 't88', version: '[0.6,0.7)') {
+        jarJar.pin(it, '0.6.0-pre.0')
+    }
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
