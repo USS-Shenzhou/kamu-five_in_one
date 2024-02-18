@@ -1,5 +1,6 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
+import cn.ussshenzhou.kamufive_in_one_2.FioManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +37,10 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     public void render(Player player, float pEntityYaw, float pPartialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+        if (FioManager.Client.mainPlayer != player) {
+            return;
+        }
+
         if (!MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre<>(player, this, pPartialTicks, poseStack, multiBufferSource, packedLight))) {
             poseStack.pushPose();
             this.model.attackTime = this.getAttackAnim(player, pPartialTicks);
@@ -46,7 +52,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
             float f2 = f1 - f;
             float f7;
             if (shouldSit && player.getVehicle() instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity)player.getVehicle();
+                LivingEntity livingentity = (LivingEntity) player.getVehicle();
                 f = Mth.rotLerp(pPartialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
                 f2 = f1 - f;
                 f7 = Mth.wrapDegrees(f2);
@@ -77,7 +83,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
                 Direction direction = player.getBedOrientation();
                 if (direction != null) {
                     f8 = player.getEyeHeight(Pose.STANDING) - 0.1F;
-                    poseStack.translate((float)(-direction.getStepX()) * f8, 0.0F, (float)(-direction.getStepZ()) * f8);
+                    poseStack.translate((float) (-direction.getStepX()) * f8, 0.0F, (float) (-direction.getStepZ()) * f8);
                 }
             }
 
@@ -108,10 +114,10 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
             boolean flag2 = minecraft.shouldEntityAppearGlowing(player);
             RenderType rendertype = this.getRenderType(player, flag, flag1, flag2);
             if (rendertype != null) {
-                VertexConsumer vertexconsumer = multiBufferSource.getBuffer(rendertype);
-                int i = getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks));
+                //VertexConsumer vertexconsumer = multiBufferSource.getBuffer(rendertype);
+                //int i = getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks));
                 //this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
-                model.render(poseStack,multiBufferSource,packedLight,getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks)));
+                model.render(poseStack, multiBufferSource, packedLight, getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks)));
             }
 
             /*if (!player.isSpectator()) {
@@ -127,5 +133,14 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
             super.render(player, pEntityYaw, pPartialTicks, poseStack, multiBufferSource, packedLight);
             MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post<>(player, this, pPartialTicks, poseStack, multiBufferSource, packedLight));
         }
+    }
+
+    @Override
+    protected void renderNameTag(Player player, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+        if (FioManager.Client.mainPlayer != player) {
+            return;
+        }
+
+        super.renderNameTag(player, pDisplayName, pPoseStack, pBuffer, pPackedLight);
     }
 }

@@ -22,23 +22,27 @@ import java.util.function.Supplier;
  */
 @NetPacket
 public class SelectPartPacket {
-    public final UUID player;
+    public final UUID selectorUUID;
+    public final UUID mainPlayerUUID;
     public final Part part;
 
-    public SelectPartPacket(UUID player, Part part) {
-        this.player = player;
+    public SelectPartPacket(UUID selectorUUID, UUID mainPlayerUUID, Part part) {
+        this.selectorUUID = selectorUUID;
+        this.mainPlayerUUID = mainPlayerUUID;
         this.part = part;
     }
 
     @Decoder
     public SelectPartPacket(FriendlyByteBuf buf) {
-        player = buf.readUUID();
+        selectorUUID = buf.readUUID();
+        mainPlayerUUID = buf.readUUID();
         part = buf.readEnum(Part.class);
     }
 
     @Encoder
     public void write(FriendlyByteBuf buf) {
-        buf.writeUUID(player);
+        buf.writeUUID(selectorUUID);
+        buf.writeUUID(mainPlayerUUID);
         buf.writeEnum(part);
     }
 
@@ -53,14 +57,19 @@ public class SelectPartPacket {
 
     @OnlyIn(Dist.CLIENT)
     private void clientHandler() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        FioManager.Client.playerParts.put(part, (AbstractClientPlayer) mc.level.getPlayerByUUID(player));
-        assert mc.player != null;
-        if (player.equals(mc.player.getUUID())) {
+        Minecraft localMc = Minecraft.getInstance();
+        assert localMc.level != null;
+        var selector = (AbstractClientPlayer) localMc.level.getPlayerByUUID(selectorUUID);
+        var mainPlayer = (AbstractClientPlayer) localMc.level.getPlayerByUUID(mainPlayerUUID);
+        var map = FioManager.Client.playerParts;
+        map.remove(map.inverse().get(selector));
+        map.put(part, selector);
+        assert localMc.player != null;
+        FioManager.Client.mainPlayer = mainPlayer;
+        if (selectorUUID.equals(localMc.player.getUUID())) {
             FioManager.Client.part = part;
-            mc.player = FioManager.Client.getMainPlayer();
-            mc.setCameraEntity(mc.player);
+            //noinspection DataFlowIssue
+            localMc.setCameraEntity(mainPlayer);
         }
     }
 }

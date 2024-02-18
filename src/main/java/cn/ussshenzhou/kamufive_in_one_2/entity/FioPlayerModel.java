@@ -5,7 +5,7 @@ import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -17,61 +17,62 @@ import net.minecraft.world.entity.player.Player;
 /**
  * @author USS_Shenzhou
  */
-public class FioPlayerModel<T extends Player> extends EntityModel<T> {
+public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(FiveInOne.MOD_ID, "fio_player_model"), "main");
 
-    private final ModelPart head;
-    private final ModelPart rightArmBody;
-    private final ModelPart rightArm;
-    private final ModelPart leftArm;
-    private final ModelPart rightLeg;
-    private final ModelPart leftLeg;
-    private final ModelPart leftArmBody;
-    private final ModelPart leftFootBody;
-    private final ModelPart rightFootBody;
+    private final ModelPart headF;
+    private final ModelPart rightArmBodyF;
+    private final ModelPart rightArmF;
+    private final ModelPart leftArmF;
+    private final ModelPart rightLegF;
+    private final ModelPart leftLegF;
+    private final ModelPart leftArmBodyF;
+    private final ModelPart leftFootBodyF;
+    private final ModelPart rightFootBodyF;
 
     public FioPlayerModel(ModelPart root) {
-        this.head = root.getChild("Head");
-        this.rightArmBody = root.getChild("RightArmBody");
-        this.rightArm = root.getChild("RightArm");
-        this.leftArm = root.getChild("LeftArm");
-        this.rightLeg = root.getChild("RightLeg");
-        this.leftLeg = root.getChild("LeftLeg");
-        this.leftArmBody = root.getChild("LeftArmBody");
-        this.leftFootBody = root.getChild("LeftFootBody");
-        this.rightFootBody = root.getChild("RightFootBody");
+        super(root);
+        this.headF = root.getChild("HeadF");
+        this.rightArmBodyF = root.getChild("RightArmBodyF");
+        this.rightArmF = root.getChild("RightArmF");
+        this.leftArmF = root.getChild("LeftArmF");
+        this.rightLegF = root.getChild("RightLegF");
+        this.leftLegF = root.getChild("LeftLegF");
+        this.leftArmBodyF = root.getChild("LeftArmBodyF");
+        this.leftFootBodyF = root.getChild("LeftFootBodyF");
+        this.rightFootBodyF = root.getChild("RightFootBodyF");
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition meshdefinition = new MeshDefinition();
+        MeshDefinition meshdefinition = createMesh(CubeDeformation.NONE, 0);
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition Head = partdefinition.addOrReplaceChild("Head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
+        PartDefinition Head = partdefinition.addOrReplaceChild("HeadF", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
                 .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition RightArm = partdefinition.addOrReplaceChild("RightArm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition RightArm = partdefinition.addOrReplaceChild("RightArmF", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(40, 32).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
-        PartDefinition LeftArm = partdefinition.addOrReplaceChild("LeftArm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition LeftArm = partdefinition.addOrReplaceChild("LeftArmF", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-        PartDefinition RightLeg = partdefinition.addOrReplaceChild("RightLeg", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition RightLeg = partdefinition.addOrReplaceChild("RightLegF", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 32).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
 
-        PartDefinition LeftLeg = partdefinition.addOrReplaceChild("LeftLeg", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition LeftLeg = partdefinition.addOrReplaceChild("LeftLegF", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
-        PartDefinition RightArmBody = partdefinition.addOrReplaceChild("RightArmBody", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition RightArmBody = partdefinition.addOrReplaceChild("RightArmBodyF", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(24, 32).addBox(-4.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition LeftArmBody = partdefinition.addOrReplaceChild("LeftArmBody", CubeListBuilder.create().texOffs(20, 16).addBox(0.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition LeftArmBody = partdefinition.addOrReplaceChild("LeftArmBodyF", CubeListBuilder.create().texOffs(20, 16).addBox(0.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(18, 32).addBox(0.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition RightFootBody = partdefinition.addOrReplaceChild("RightFootBody", CubeListBuilder.create().texOffs(16, 22).addBox(-4.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition RightFootBody = partdefinition.addOrReplaceChild("RightFootBodyF", CubeListBuilder.create().texOffs(16, 22).addBox(-4.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(24, 38).addBox(-4.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition LeftFootBody = partdefinition.addOrReplaceChild("LeftFootBody", CubeListBuilder.create().texOffs(20, 22).addBox(0.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition LeftFootBody = partdefinition.addOrReplaceChild("LeftFootBodyF", CubeListBuilder.create().texOffs(20, 22).addBox(0.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(18, 38).addBox(0.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
 
@@ -80,7 +81,16 @@ public class FioPlayerModel<T extends Player> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        headF.copyFrom(head);
+        rightArmBodyF.copyFrom(body);
+        leftArmBodyF.copyFrom(body);
+        rightFootBodyF.copyFrom(body);
+        leftFootBodyF.copyFrom(body);
+        rightArmF.copyFrom(rightArm);
+        rightLegF.copyFrom(rightLeg);
+        leftArmF.copyFrom(leftArm);
+        leftLegF.copyFrom(leftLeg);
     }
 
     @Override
@@ -88,11 +98,11 @@ public class FioPlayerModel<T extends Player> extends EntityModel<T> {
     }
 
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.HEAD, head);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_ARM, rightArmBody, rightArm);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_ARM, leftArmBody, leftArm);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_FOOT, rightFootBody, rightLeg);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_FOOT, leftFootBody, leftLeg);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.HEAD, headF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_ARM, rightArmBodyF, rightArmF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_ARM, leftArmBodyF, leftArmF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_FOOT, rightFootBodyF, rightLegF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_FOOT, leftFootBodyF, leftLegF);
     }
 
     private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, Part part, ModelPart... modelParts) {
