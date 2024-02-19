@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2;
 
 import cn.ussshenzhou.kamufive_in_one_2.network.SelectPartPacket;
+import cn.ussshenzhou.kamufive_in_one_2.network.ServerGamePacketListenerImplModified;
 import cn.ussshenzhou.t88.network.NetworkHelper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -36,12 +37,12 @@ public class FioManager {
     private static MinecraftServer server;
     public static BiMap<Part, UUID> playerParts = HashBiMap.create();
 
-    /*@SubscribeEvent
+    @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent event) {
         if (server == null) {
             server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
         }
-        if (event.phase == TickEvent.Phase.END) {
+        /*if (event.phase == TickEvent.Phase.END) {
             return;
         }
         getMainPlayer().ifPresent(main -> {
@@ -55,8 +56,8 @@ public class FioManager {
                         serverPlayer.setDeltaMovement(main.getDeltaMovement());
                         serverPlayer.moveTo(main.position());
                     });
-        });
-    }*/
+        });*/
+    }
 
     public static void selectPart(CommandSourceStack source, Part part) {
         var sourcePlayer = source.getPlayer();
@@ -67,8 +68,7 @@ public class FioManager {
         playerParts.remove(playerParts.inverse().get(sourcePlayer.getUUID()));
         playerParts.put(part, sourcePlayer.getUUID());
         NetworkHelper.sendTo(PacketDistributor.ALL.noArg(), new SelectPartPacket(sourcePlayer.getUUID(), mainPlayer, part));
-        //sourcePlayer.connection = ServerGamePacketListenerImplModified.from(sourcePlayer.connection, mainPlayer);
-
+        sourcePlayer.connection = ServerGamePacketListenerImplModified.from(sourcePlayer.connection);
 
         switch (part) {
             case HEAD -> {
@@ -103,6 +103,10 @@ public class FioManager {
 
     public static boolean isFioPlayer(Player player) {
         return NAME.equals(player.getGameProfile().getName());
+    }
+
+    public static boolean isMainPlayer(Player player) {
+        return mainPlayer != null && player.getUUID().equals(mainPlayer);
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)

@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "kamu-five_in_one_2.refmap.json",
   "mixins": [
-    "ConnectionMixin"
+    "ConnectionMixin",
+    "PlayerMixin"
   ],
   "client": [
   ],
