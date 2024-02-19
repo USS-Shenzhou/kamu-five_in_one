@@ -65,11 +65,11 @@ public class SelectPartPacket {
         map.remove(map.inverse().get(selector));
         map.put(part, selector);
         assert localMc.player != null;
-        FioManager.Client.mainPlayer = mainPlayer;
+        FioManager.Client.mainPlayer = mainPlayerUUID;
         if (selectorUUID.equals(localMc.player.getUUID())) {
             FioManager.Client.part = part;
             //noinspection DataFlowIssue
-            localMc.setCameraEntity(mainPlayer);
+            //localMc.setCameraEntity(mainPlayer);
         }
     }
 }

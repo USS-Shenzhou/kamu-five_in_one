@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.t88.T88;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -37,7 +38,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     public void render(Player player, float pEntityYaw, float pPartialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        if (FioManager.Client.mainPlayer != player) {
+        if (FioManager.Client.mainPlayer == null || !FioManager.Client.mainPlayer.equals(player.getUUID())) {
             return;
         }
 
@@ -137,7 +138,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     protected void renderNameTag(Player player, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        if (FioManager.Client.mainPlayer != player) {
+        if (FioManager.Client.mainPlayer == null || !FioManager.Client.mainPlayer.equals(player.getUUID())) {
             return;
         }
 

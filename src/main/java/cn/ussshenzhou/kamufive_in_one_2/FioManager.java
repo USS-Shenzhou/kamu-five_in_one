@@ -7,6 +7,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author USS_Shenzhou
@@ -79,12 +81,16 @@ public class FioManager {
     @OnlyIn(Dist.CLIENT)
     public static class Client {
 
-        public static @Nullable AbstractClientPlayer mainPlayer;
+        public static @Nullable UUID mainPlayer;
         public static BiMap<Part, AbstractClientPlayer> playerParts = HashBiMap.create();
         public static @Nullable Part part;
 
         public static Optional<AbstractClientPlayer> getMainPlayer() {
-            return Optional.ofNullable(mainPlayer);
+            if (mainPlayer == null) {
+                return Optional.empty();
+            }
+            //noinspection DataFlowIssue
+            return Optional.ofNullable((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(mainPlayer));
         }
     }
 
