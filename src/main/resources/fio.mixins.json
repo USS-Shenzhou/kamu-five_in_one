@@ -1,10 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "cn.ussshenzhou.fio.mixin",
+  "package": "cn.ussshenzhou.kamufive_in_one_2.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "kamu-five_in_one_2.refmap.json",
   "mixins": [
+    "ConnectionMixin"
   ],
   "client": [
   ],

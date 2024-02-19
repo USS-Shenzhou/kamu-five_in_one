@@ -5,11 +5,13 @@ import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -106,11 +108,15 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
     }
 
     private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, Part part, ModelPart... modelParts) {
-        var abstractClientPlayer = FioManager.Client.playerParts.get(part);
-        if (abstractClientPlayer == null) {
+        var uuid = FioManager.Client.playerParts.get(part);
+        if (uuid == null) {
             return;
         }
-        var location = abstractClientPlayer.getSkinTextureLocation();
+        var player = ((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(uuid));
+        if (player == null) {
+            return;
+        }
+        var location = player.getSkinTextureLocation();
         var vertexConsumer = multiBufferSource.getBuffer(this.renderType(location));
         float alpha = part == FioManager.Client.part ? 0.15f : 1;
         for (ModelPart modelPart : modelParts) {
