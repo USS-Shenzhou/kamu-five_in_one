@@ -97,11 +97,6 @@ public class ServerGamePacketListenerImplModified extends ServerGamePacketListen
     }
 
     @Override
-    public void handleMovePlayer(ServerboundMovePlayerPacket pPacket) {
-        super.handleMovePlayer(pPacket);
-    }
-
-    @Override
     public void teleport(double pX, double pY, double pZ, float pYaw, float pPitch, Set<RelativeMovement> pRelativeSet) {
         double d0 = pRelativeSet.contains(RelativeMovement.X) ? this.player.getX() : 0.0D;
         double d1 = pRelativeSet.contains(RelativeMovement.Y) ? this.player.getY() : 0.0D;
