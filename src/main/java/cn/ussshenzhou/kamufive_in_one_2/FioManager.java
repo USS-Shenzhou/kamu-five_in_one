@@ -33,7 +33,7 @@ public class FioManager {
 
     public static final String NAME = "我们一起";
 
-    private static @Nullable UUID mainPlayer;
+    public static @Nullable UUID mainPlayer;
     private static MinecraftServer server;
     public static BiMap<Part, UUID> playerParts = HashBiMap.create();
 
@@ -110,7 +110,6 @@ public class FioManager {
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-    @OnlyIn(Dist.CLIENT)
     public static class Client {
 
         public static @Nullable UUID mainPlayer;
@@ -123,6 +122,14 @@ public class FioManager {
             }
             //noinspection DataFlowIssue
             return Optional.ofNullable((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(mainPlayer));
+        }
+
+        public static boolean isFioPlayer(Player player) {
+            return NAME.equals(player.getGameProfile().getName());
+        }
+
+        public static boolean isMainPlayer(Player player) {
+            return mainPlayer != null && player.getUUID().equals(mainPlayer);
         }
     }
 
