@@ -44,19 +44,7 @@ public class FioManager {
         }
         /*if (event.phase == TickEvent.Phase.END) {
             return;
-        }
-        getMainPlayer().ifPresent(main -> {
-            playerParts.values().stream()
-                    .map(uuid -> server.getPlayerList().getPlayer(uuid))
-                    .filter(serverPlayer -> serverPlayer != main)
-                    .forEach(serverPlayer -> {
-                        if (serverPlayer == null) {
-                            return;
-                        }
-                        serverPlayer.setDeltaMovement(main.getDeltaMovement());
-                        serverPlayer.moveTo(main.position());
-                    });
-        });*/
+        }*/
     }
 
     public static void selectPart(CommandSourceStack source, Part part) {
@@ -68,9 +56,17 @@ public class FioManager {
         playerParts.remove(playerParts.inverse().get(sourcePlayer.getUUID()));
         playerParts.put(part, sourcePlayer.getUUID());
         NetworkHelper.sendTo(PacketDistributor.ALL.noArg(), new SelectPartPacket(sourcePlayer.getUUID(), mainPlayer, part));
+        sourcePlayer.server.getAllLevels()
+                .forEach(level -> level.getChunkSource().chunkMap.entityMap
+                        .forEach((i, trackedEntity) -> trackedEntity.seenBy
+                                .removeIf(serverPlayerConnection -> serverPlayerConnection.getPlayer().getUUID().equals(sourcePlayer.getUUID()))
+                        )
+                );
         sourcePlayer.connection = ServerGamePacketListenerImplModified.from(sourcePlayer.connection);
-
-        switch (part) {
+        if (!sourcePlayer.getUUID().equals(mainPlayer)) {
+            getMainPlayer().ifPresent(sourcePlayer::setCamera);
+        }
+        /*switch (part) {
             case HEAD -> {
 
             }
@@ -86,7 +82,7 @@ public class FioManager {
             case RIGHT_FOOT -> {
 
             }
-        }
+        }*/
     }
 
     public static @Nonnull ServerPlayer getOrCreateMainPlayer(ServerPlayer from) {
@@ -107,6 +103,10 @@ public class FioManager {
 
     public static boolean isMainPlayer(Player player) {
         return mainPlayer != null && player.getUUID().equals(mainPlayer);
+    }
+
+    public static <MSG> void relay(MSG packet) {
+        getMainPlayer().ifPresent(main -> NetworkHelper.sendToPlayer(main, packet));
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)

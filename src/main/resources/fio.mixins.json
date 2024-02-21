@@ -9,6 +9,7 @@
     "PlayerMixin"
   ],
   "client": [
+    "KeyBoardHandlerMixin",
     "LocalPlayerMixin"
   ],
   "injectors": {

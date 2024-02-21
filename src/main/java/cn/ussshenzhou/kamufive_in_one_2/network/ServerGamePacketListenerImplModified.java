@@ -96,25 +96,4 @@ public class ServerGamePacketListenerImplModified extends ServerGamePacketListen
         return new ServerGamePacketListenerImplModified(old.player.server, old.connection, old.player);
     }
 
-    @Override
-    public void handleMovePlayer(ServerboundMovePlayerPacket pPacket) {
-        super.handleMovePlayer(pPacket);
-    }
-
-    @Override
-    public void teleport(double pX, double pY, double pZ, float pYaw, float pPitch, Set<RelativeMovement> pRelativeSet) {
-        double d0 = pRelativeSet.contains(RelativeMovement.X) ? this.player.getX() : 0.0D;
-        double d1 = pRelativeSet.contains(RelativeMovement.Y) ? this.player.getY() : 0.0D;
-        double d2 = pRelativeSet.contains(RelativeMovement.Z) ? this.player.getZ() : 0.0D;
-        float f = pRelativeSet.contains(RelativeMovement.Y_ROT) ? this.player.getYRot() : 0.0F;
-        float f1 = pRelativeSet.contains(RelativeMovement.X_ROT) ? this.player.getXRot() : 0.0F;
-        this.awaitingPositionFromClient = new Vec3(pX, pY, pZ);
-        if (++this.awaitingTeleport == Integer.MAX_VALUE) {
-            this.awaitingTeleport = 0;
-        }
-
-        this.awaitingTeleportTime = this.tickCount;
-        this.player.absMoveTo(pX, pY, pZ, pYaw, pPitch);
-        this.player.connection.send(new ClientboundPlayerPositionPacket(pX - d0, pY - d1, pZ - d2, pYaw - f, pPitch - f1, pRelativeSet, this.awaitingTeleport));
-    }
 }

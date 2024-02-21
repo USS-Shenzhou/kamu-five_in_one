@@ -1,4 +1,4 @@
-package cn.ussshenzhou.kamufive_in_one_2.network;
+package cn.ussshenzhou.kamufive_in_one_2;
 
 import com.google.common.collect.Sets;
 import net.minecraft.network.protocol.game.ServerboundKeepAlivePacket;
