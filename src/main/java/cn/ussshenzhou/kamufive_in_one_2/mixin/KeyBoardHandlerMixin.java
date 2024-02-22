@@ -3,6 +3,7 @@ package cn.ussshenzhou.kamufive_in_one_2.mixin;
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
 import cn.ussshenzhou.kamufive_in_one_2.InputHelper;
 import cn.ussshenzhou.kamufive_in_one_2.network.KeyPressRelayPacket;
+import cn.ussshenzhou.kamufive_in_one_2.network.MouseScrollRelayPacket;
 import cn.ussshenzhou.t88.network.NetworkHelper;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
@@ -22,10 +23,12 @@ public class KeyBoardHandlerMixin {
         if (FioManager.Client.mainPlayer != null
                 && FioManager.Client.part != null
                 && !InputHelper.ignore(pKey)
+                && Minecraft.getInstance().screen == null
                 && !FioManager.Client.isMainPlayer(Minecraft.getInstance().player)) {
-            assert Minecraft.getInstance().player != null;
-            NetworkHelper.sendToServer(new KeyPressRelayPacket(Minecraft.getInstance().player.getUUID(), pKey, pScanCode, pAction, pModifiers));
-            ci.cancel();
+            if (Minecraft.getInstance().player != null) {
+                NetworkHelper.sendToServer(new KeyPressRelayPacket(Minecraft.getInstance().player.getUUID(), pKey, pScanCode, pAction, pModifiers));
+                ci.cancel();
+            }
         }
     }
 }

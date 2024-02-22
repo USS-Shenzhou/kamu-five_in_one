@@ -24,7 +24,8 @@ public class InputHelper {
             GLFW_KEY_F9,
             GLFW_KEY_F10,
             GLFW_KEY_F11,
-            GLFW_KEY_F12
+            GLFW_KEY_F12,
+            GLFW_KEY_SLASH
     );
 
     public static boolean ignore(int key) {

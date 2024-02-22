@@ -22,17 +22,4 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
         super(pClientLevel, pGameProfile);
     }
 
-    @Inject(method = "sendPosition", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isPassenger()Z", shift = At.Shift.BEFORE))
-    private void setOthersPos(CallbackInfo ci, @Local(ordinal = 1) boolean flag1) {
-        /*if (flag1) {
-            FioManager.Client.playerParts.forEach((part, uuid) -> {
-                if (!this.getUUID().equals(uuid)) {
-                    var player = Minecraft.getInstance().level.getPlayerByUUID(uuid);
-                    if (player != null) {
-                        player.setPos(this.getX(), this.getY(), this.getZ());
-                    }
-                }
-            });
-        }*/
-    }
 }
