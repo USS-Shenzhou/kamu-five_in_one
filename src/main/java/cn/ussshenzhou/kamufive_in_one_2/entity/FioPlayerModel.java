@@ -13,6 +13,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -34,7 +35,7 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
     private final ModelPart rightFootBodyF;
 
     public FioPlayerModel(ModelPart root) {
-        super(root);
+        super(root, RenderType::entityTranslucent);
         this.headF = root.getChild("HeadF");
         this.rightArmBodyF = root.getChild("RightArmBodyF");
         this.rightArmF = root.getChild("RightArmF");
@@ -118,7 +119,7 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         }
         var location = player.getSkinTextureLocation();
         var vertexConsumer = multiBufferSource.getBuffer(this.renderType(location));
-        float alpha = part == FioManager.Client.part ? 0.15f : 1;
+        float alpha = part == FioManager.Client.part ? 0.2f : 1;
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);

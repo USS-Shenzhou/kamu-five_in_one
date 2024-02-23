@@ -71,5 +71,8 @@ public class SelectPartPacket {
             //noinspection DataFlowIssue
             //localMc.setCameraEntity(mainPlayer);
         }
+        if (selector != mainPlayer && selector != null) {
+            selector.setBoundingBox(FioManager.ZERO);
+        }
     }
 }

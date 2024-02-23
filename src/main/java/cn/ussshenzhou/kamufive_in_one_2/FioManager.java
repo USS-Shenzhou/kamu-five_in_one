@@ -11,6 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LogicalSidedProvider;
@@ -36,6 +37,7 @@ public class FioManager {
     public static @Nullable UUID mainPlayer;
     private static MinecraftServer server;
     public static BiMap<Part, UUID> playerParts = HashBiMap.create();
+    public static AABB ZERO = new AABB(0, 0, 0, 0, 0, 0);
 
     @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent event) {
@@ -65,6 +67,7 @@ public class FioManager {
         sourcePlayer.connection = ServerGamePacketListenerImplModified.from(sourcePlayer.connection);
         if (!sourcePlayer.getUUID().equals(mainPlayer)) {
             getMainPlayer().ifPresent(sourcePlayer::setCamera);
+            sourcePlayer.setBoundingBox(ZERO);
         }
         /*switch (part) {
             case HEAD -> {
