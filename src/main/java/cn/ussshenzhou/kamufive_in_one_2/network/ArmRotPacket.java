@@ -19,55 +19,53 @@ import java.util.function.Supplier;
  * @author USS_Shenzhou
  */
 @NetPacket
-public class KeyPressRelayPacket {
-    public final UUID from;
-    public final int key;
-    public final int scanCode;
-    public final int action;
-    public final int modifiers;
+public class ArmRotPacket {
 
-    public KeyPressRelayPacket(UUID from, int key, int scanCode, int action, int modifiers) {
+    public final UUID from;
+    public final float xRotOld, xRot, yRotOld, yRot;
+
+    public ArmRotPacket(UUID from, float xRotOld, float xRot, float yRotOld, float yRot) {
         this.from = from;
-        this.key = key;
-        this.scanCode = scanCode;
-        this.action = action;
-        this.modifiers = modifiers;
+        this.xRotOld = xRotOld;
+        this.xRot = xRot;
+        this.yRotOld = yRotOld;
+        this.yRot = yRot;
     }
 
     @Decoder
-    public KeyPressRelayPacket(FriendlyByteBuf buf) {
+    public ArmRotPacket(FriendlyByteBuf buf) {
         this.from = buf.readUUID();
-        this.key = buf.readInt();
-        this.scanCode = buf.readInt();
-        this.action = buf.readInt();
-        this.modifiers = buf.readInt();
+        this.xRotOld = buf.readFloat();
+        this.xRot = buf.readFloat();
+        this.yRotOld = buf.readFloat();
+        this.yRot = buf.readFloat();
     }
 
     @Encoder
     public void write(FriendlyByteBuf buf) {
         buf.writeUUID(from);
-        buf.writeInt(key);
-        buf.writeInt(scanCode);
-        buf.writeInt(action);
-        buf.writeInt(modifiers);
+        buf.writeFloat(xRotOld);
+        buf.writeFloat(xRot);
+        buf.writeFloat(yRotOld);
+        buf.writeFloat(yRot);
     }
 
     @Consumer
     public void handler(Supplier<NetworkEvent.Context> context) {
         if (context.get().getDirection().equals(NetworkDirection.PLAY_TO_SERVER)) {
-            serverHandler();
+            serverHandler(context.get());
         } else {
-            clientHandler();
+            clientHandler(context.get());
         }
     }
 
-    private void serverHandler() {
-        FioManager.relayToMain(this);
+    private void serverHandler(NetworkEvent.Context context) {
+        FioManager.broadCast(this);
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void clientHandler() {
+    private void clientHandler(NetworkEvent.Context context) {
         var mc = Minecraft.getInstance();
-        mc.keyboardHandler.keyPress(mc.getWindow().getWindow(), key, scanCode, action, modifiers);
+        //TODO
     }
 }

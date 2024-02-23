@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2.network;
 
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.Part;
 import cn.ussshenzhou.t88.network.annotation.Consumer;
 import cn.ussshenzhou.t88.network.annotation.Decoder;
 import cn.ussshenzhou.t88.network.annotation.Encoder;
@@ -48,19 +49,23 @@ public class MouseMoveRelayPacket {
     @Consumer
     public void handler(Supplier<NetworkEvent.Context> context) {
         if (context.get().getDirection().equals(NetworkDirection.PLAY_TO_SERVER)) {
-            serverHandler();
+            serverHandler(context.get());
         } else {
-            clientHandler();
+            clientHandler(context.get());
         }
     }
 
-    private void serverHandler() {
-        FioManager.relay(this);
+    private void serverHandler(NetworkEvent.Context context) {
+        FioManager.relayToMain(this);
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void clientHandler() {
+    private void clientHandler(NetworkEvent.Context context) {
         var mc = Minecraft.getInstance();
-        mc.mouseHandler.onMove(mc.getWindow().getWindow(), dx + mc.mouseHandler.xpos(), dy + mc.mouseHandler.ypos());
+        //arm turing will be handled at their own local.
+        //foot can't turn
+        if (FioManager.Client.isHead(context.getSender())) {
+            mc.mouseHandler.onMove(mc.getWindow().getWindow(), dx + mc.mouseHandler.xpos(), dy + mc.mouseHandler.ypos());
+        }
     }
 }

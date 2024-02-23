@@ -109,7 +109,7 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
     }
 
     private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, Part part, ModelPart... modelParts) {
-        var uuid = FioManager.Client.playerParts.get(part);
+        var uuid = FioManager.Client.playerPartsClient.get(part);
         if (uuid == null) {
             return;
         }

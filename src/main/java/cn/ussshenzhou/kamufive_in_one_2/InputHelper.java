@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2;
 
 import com.google.common.collect.Sets;
+import net.minecraft.client.Minecraft;
 
 import java.util.Set;
 
@@ -30,5 +31,12 @@ public class InputHelper {
 
     public static boolean ignore(int key) {
         return SPECIAL_KEY.contains(key);
+    }
+
+    public static boolean inGame() {
+        return FioManager.Client.mainPlayer != null
+                && FioManager.Client.part != null
+                && Minecraft.getInstance().screen == null
+                && Minecraft.getInstance().player != null;
     }
 }

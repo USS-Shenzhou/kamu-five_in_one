@@ -61,7 +61,7 @@ public class SelectPartPacket {
         assert localMc.level != null;
         var selector = (AbstractClientPlayer) localMc.level.getPlayerByUUID(selectorUUID);
         var mainPlayer = (AbstractClientPlayer) localMc.level.getPlayerByUUID(mainPlayerUUID);
-        var map = FioManager.Client.playerParts;
+        var map = FioManager.Client.playerPartsClient;
         map.remove(map.inverse().get(selectorUUID));
         map.put(part, selectorUUID);
         assert localMc.player != null;

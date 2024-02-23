@@ -59,7 +59,7 @@ public class MousePressRelayPacket {
     }
 
     private void serverHandler() {
-        FioManager.relay(this);
+        FioManager.relayToMain(this);
     }
 
     @OnlyIn(Dist.CLIENT)
