@@ -39,4 +39,5 @@ public class InputHelper {
                 && Minecraft.getInstance().screen == null
                 && Minecraft.getInstance().player != null;
     }
+
 }

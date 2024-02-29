@@ -5,6 +5,7 @@ import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -86,29 +87,40 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         headF.copyFrom(head);
-        rightArmBodyF.copyFrom(body);
         leftArmBodyF.copyFrom(body);
-        rightFootBodyF.copyFrom(body);
+        rightArmBodyF.copyFrom(body);
         leftFootBodyF.copyFrom(body);
-        rightArmF.copyFrom(rightArm);
-        rightLegF.copyFrom(rightLeg);
+        rightFootBodyF.copyFrom(body);
+
+
         leftArmF.copyFrom(leftArm);
+        leftArmF.xRot = 0;
+        leftArmF.yRot = 0;
+        leftArmF.zRot = 0;
+
         leftLegF.copyFrom(leftLeg);
+
+        rightArmF.copyFrom(rightArm);
+        rightArmF.xRot = 0;
+        rightArmF.yRot = 0;
+        rightArmF.zRot = 0;
+
+        rightLegF.copyFrom(rightLeg);
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
     }
 
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.HEAD, headF);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_ARM, rightArmBodyF, rightArmF);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_ARM, leftArmBodyF, leftArmF);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.RIGHT_FOOT, rightFootBodyF, rightLegF);
-        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, Part.LEFT_FOOT, leftFootBodyF, leftLegF);
+    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, float partialTick) {
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, partialTick, Part.HEAD, headF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, partialTick, Part.RIGHT_ARM, rightArmBodyF, rightArmF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, partialTick, Part.LEFT_ARM, leftArmBodyF, leftArmF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, partialTick, Part.RIGHT_FOOT, rightFootBodyF, rightLegF);
+        renderPart(poseStack, multiBufferSource, packedLight, packedOverlay, partialTick, Part.LEFT_FOOT, leftFootBodyF, leftLegF);
     }
 
-    private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, Part part, ModelPart... modelParts) {
+    private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, float partialTick, Part part, ModelPart... modelParts) {
         var uuid = FioManager.Client.playerPartsClient.get(part);
         if (uuid == null) {
             return;
@@ -122,6 +134,11 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         float alpha = part == FioManager.Client.part ? 0.2f : 1;
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
+            if (modelPart == leftArmF) {
+                poseStack.rotateAround(FioManager.Client.getRotL(partialTick), 4 / 16f, 0, 0);
+            } else if (modelPart == rightArmF) {
+                poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -4 / 16f, 0, 0);
+            }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
             poseStack.popPose();
         }

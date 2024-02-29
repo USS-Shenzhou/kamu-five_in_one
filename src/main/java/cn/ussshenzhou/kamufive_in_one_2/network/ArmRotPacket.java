@@ -5,7 +5,6 @@ import cn.ussshenzhou.t88.network.annotation.Consumer;
 import cn.ussshenzhou.t88.network.annotation.Decoder;
 import cn.ussshenzhou.t88.network.annotation.Encoder;
 import cn.ussshenzhou.t88.network.annotation.NetPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,32 +21,32 @@ import java.util.function.Supplier;
 public class ArmRotPacket {
 
     public final UUID from;
-    public final float xRotOld, xRot, yRotOld, yRot;
+    public final float x, y, z, w;
 
-    public ArmRotPacket(UUID from, float xRotOld, float xRot, float yRotOld, float yRot) {
+    public ArmRotPacket(UUID from, float x, float y, float z, float w) {
         this.from = from;
-        this.xRotOld = xRotOld;
-        this.xRot = xRot;
-        this.yRotOld = yRotOld;
-        this.yRot = yRot;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
     }
 
     @Decoder
     public ArmRotPacket(FriendlyByteBuf buf) {
         this.from = buf.readUUID();
-        this.xRotOld = buf.readFloat();
-        this.xRot = buf.readFloat();
-        this.yRotOld = buf.readFloat();
-        this.yRot = buf.readFloat();
+        this.x = buf.readFloat();
+        this.y = buf.readFloat();
+        this.z = buf.readFloat();
+        this.w = buf.readFloat();
     }
 
     @Encoder
     public void write(FriendlyByteBuf buf) {
         buf.writeUUID(from);
-        buf.writeFloat(xRotOld);
-        buf.writeFloat(xRot);
-        buf.writeFloat(yRotOld);
-        buf.writeFloat(yRot);
+        buf.writeFloat(x);
+        buf.writeFloat(y);
+        buf.writeFloat(z);
+        buf.writeFloat(w);
     }
 
     @Consumer
@@ -60,12 +59,11 @@ public class ArmRotPacket {
     }
 
     private void serverHandler(NetworkEvent.Context context) {
-        FioManager.broadCast(this);
+        FioManager.broadCastExcept(this, context.getSender().getUUID());
     }
 
     @OnlyIn(Dist.CLIENT)
     private void clientHandler(NetworkEvent.Context context) {
-        var mc = Minecraft.getInstance();
-        //TODO
+        FioManager.Client.rotArmRaw(from, x, y, z, w);
     }
 }

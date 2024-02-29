@@ -1,16 +1,20 @@
 package cn.ussshenzhou.kamufive_in_one_2;
 
+import cn.ussshenzhou.kamufive_in_one_2.network.ArmRotPacket;
 import cn.ussshenzhou.kamufive_in_one_2.network.SelectPartPacket;
 import cn.ussshenzhou.kamufive_in_one_2.network.ServerGamePacketListenerImplModified;
 import cn.ussshenzhou.t88.network.NetworkHelper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mojang.logging.LogUtils;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.datafix.fixes.ChunkPalettedStorageFix;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,6 +24,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -125,8 +132,11 @@ public class FioManager {
         getMainPlayer().ifPresent(main -> NetworkHelper.sendToPlayer(main, packet));
     }
 
-    public static <MSG> void broadCast(MSG packet) {
+    public static <MSG> void broadCastExcept(MSG packet, UUID except) {
         playerPartsServer.forEach((part, uuid) -> {
+            if (uuid.equals(except)) {
+                return;
+            }
             NetworkHelper.sendToPlayer(server.getPlayerList().getPlayer(uuid), packet);
         });
     }
@@ -208,33 +218,69 @@ public class FioManager {
             return Optional.ofNullable(playerPartsClient.inverse().get(player.getUUID()));
         }
 
-        public static float xRotOldL, xRotL, yRotOldL, yRotL, xRotOldR, xRotR, yRotOldR, yRotR;
+        public static Optional<Part> getPart(@Nullable UUID player) {
+            if (player == null) {
+                return Optional.empty();
+            }
+            return Optional.ofNullable(playerPartsClient.inverse().get(player));
+        }
+
+        public static Quaternionf prevQuatL = new Quaternionf();
+        public static Quaternionf quatL = new Quaternionf();
+        public static Quaternionf prevQuatR = new Quaternionf();
+        public static Quaternionf quatR = new Quaternionf();
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
                 return;
             }
-            xRotOldL = xRotL;
-            yRotOldL = yRotL;
-            xRotOldR = xRotR;
-            yRotOldR = yRotR;
+            prevQuatL.set(quatL);
+            prevQuatR.set(quatR);
         }
 
-        public static float getXRotL(float partialTick) {
-            return Mth.lerp(partialTick, xRotOldL, xRotL);
+        public static Quaternionf getRotL(float partialTick) {
+            return new Quaternionf(
+                    Mth.lerp(partialTick, prevQuatL.x, quatL.x),
+                    Mth.lerp(partialTick, prevQuatL.y, quatL.y),
+                    Mth.lerp(partialTick, prevQuatL.z, quatL.z),
+                    Mth.lerp(partialTick, prevQuatL.w, quatL.w)
+            );
+
         }
 
-        public static float getYRotL(float partialTick) {
-            return Mth.lerp(partialTick, yRotOldL, yRotL);
+        public static Quaternionf getRotR(float partialTick) {
+            return new Quaternionf(
+                    Mth.lerp(partialTick, prevQuatR.x, quatR.x),
+                    Mth.lerp(partialTick, prevQuatR.y, quatR.y),
+                    Mth.lerp(partialTick, prevQuatR.z, quatR.z),
+                    Mth.lerp(partialTick, prevQuatR.w, quatR.w)
+            );
+
         }
 
-        public static float getXRotR(float partialTick) {
-            return Mth.lerp(partialTick, xRotOldR, xRotR);
+        public static void rotArmAndBroadCast(double dx, double dz) {
+            float x = (float) (dx * Math.PI / 180);
+            float z = (float) (dz * Math.PI / 180);
+
+
+            quatL.rotateAxis(x, 0, 0, 1);
+            quatL.rotateAxis(z, 1, 0, 0);
+            if (part == Part.LEFT_ARM) {
+                NetworkHelper.sendToServer(new ArmRotPacket(Minecraft.getInstance().player.getUUID(), quatL.x, quatL.y, quatL.z, quatL.w));
+            } else if (part == Part.RIGHT_ARM) {
+                NetworkHelper.sendToServer(new ArmRotPacket(Minecraft.getInstance().player.getUUID(), quatR.x, quatR.y, quatR.z, quatR.w));
+            }
         }
 
-        public static float getYRotR(float partialTick) {
-            return Mth.lerp(partialTick, yRotOldR, yRotR);
+        public static void rotArmRaw(UUID from, float x, float y, float z, float w) {
+            getPart(from).ifPresent(p -> {
+                if (p == Part.LEFT_ARM) {
+                    quatL.set(x, y, z, w);
+                } else if (p == Part.RIGHT_ARM) {
+                    quatR.set(x, y, z, w);
+                }
+            });
         }
     }
 

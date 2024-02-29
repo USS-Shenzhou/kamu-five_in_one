@@ -118,7 +118,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
                 //VertexConsumer vertexconsumer = multiBufferSource.getBuffer(rendertype);
                 //int i = getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks));
                 //this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
-                model.render(poseStack, multiBufferSource, packedLight, getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks)));
+                model.render(poseStack, multiBufferSource, packedLight, getOverlayCoords(player, this.getWhiteOverlayProgress(player, pPartialTicks)), pPartialTicks);
             }
 
             /*if (!player.isSpectator()) {
