@@ -218,6 +218,10 @@ public class FioManager {
             return Optional.ofNullable(playerPartsClient.inverse().get(player.getUUID()));
         }
 
+        public static Optional<Part> getPart() {
+            return Optional.ofNullable(part);
+        }
+
         public static Optional<Part> getPart(@Nullable UUID player) {
             if (player == null) {
                 return Optional.empty();
