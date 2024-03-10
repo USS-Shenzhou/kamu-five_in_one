@@ -10,7 +10,8 @@
   "client": [
     "KeyBoardHandlerMixin",
     "LocalPlayerMixin",
-    "MouseHandlerMixin"
+    "MouseHandlerMixin",
+    "RenderTypeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

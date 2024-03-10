@@ -3,9 +3,11 @@ package cn.ussshenzhou.kamufive_in_one_2.entity;
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
 import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Camera;
+import com.mojang.math.Axis;
+import com.mojang.math.MatrixUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -13,11 +15,31 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HalfTransparentBlock;
+import net.minecraft.world.level.block.StainedGlassPaneBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+
+import java.util.List;
 
 /**
  * @author USS_Shenzhou
@@ -141,7 +163,127 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
                 poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -4 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
+            if (modelPart == leftArmF || modelPart == rightArmF) {
+                renderItem(player, poseStack, packedLight, packedOverlay, partialTick, modelPart, multiBufferSource, vertexConsumer, alpha);
+            }
+
             poseStack.popPose();
         }
+    }
+
+    private void renderItem(Player player, PoseStack poseStack, int packedLight, int packedOverlay, float partialTick, ModelPart modelPart, MultiBufferSource multiBufferSource, VertexConsumer vertexConsumer, float alpha) {
+        boolean flag = player.getMainArm() == HumanoidArm.RIGHT;
+        ItemStack itemstack = flag ? player.getOffhandItem() : player.getMainHandItem();
+        ItemStack itemstack1 = flag ? player.getMainHandItem() : player.getOffhandItem();
+        poseStack.pushPose();
+        if (modelPart == leftArmF) {
+            prepareItem(poseStack, modelPart);
+            renderItem(player, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, true, poseStack, multiBufferSource, packedLight, packedOverlay, alpha, modelPart);
+        } else if (modelPart == rightArmF) {
+            prepareItem(poseStack, modelPart);
+            renderItem(player, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, false, poseStack, multiBufferSource, packedLight, packedOverlay, alpha, modelPart);
+        }
+        poseStack.popPose();
+    }
+
+    private void prepareItem(PoseStack poseStack, ModelPart modelPart) {
+        poseStack.translate(modelPart.x / 16.0F, modelPart.y / 16.0F, modelPart.z / 16.0F);
+        poseStack.translate((modelPart == leftArmF ? 1 : -1) / 16f, 10 / 16F, -2 / 16f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90));
+    }
+
+    /**
+     * chaos!
+     */
+    private void renderItem(Player player, ItemStack item, ItemDisplayContext itemDisplayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, float alpha, ModelPart modelPart) {
+        if (!item.isEmpty()) {
+            var itemRenderer = Minecraft.getInstance().getItemRenderer();
+            BakedModel bakedmodel = itemRenderer.getModel(item, player.level(), player, 42);
+            poseStack.pushPose();
+            boolean flag = itemDisplayContext == ItemDisplayContext.GUI || itemDisplayContext == ItemDisplayContext.GROUND || itemDisplayContext == ItemDisplayContext.FIXED;
+            if (flag) {
+                if (item.is(Items.TRIDENT)) {
+                    bakedmodel = itemRenderer.itemModelShaper.getModelManager().getModel(ItemRenderer.TRIDENT_MODEL);
+                } else if (item.is(Items.SPYGLASS)) {
+                    bakedmodel = itemRenderer.itemModelShaper.getModelManager().getModel(ItemRenderer.SPYGLASS_MODEL);
+                }
+            }
+
+            bakedmodel = ForgeHooksClient.handleCameraTransforms(poseStack, bakedmodel, itemDisplayContext, leftHand);
+            poseStack.translate(-0.5F, -0.5F, -0.5F);
+            if (!bakedmodel.isCustomRenderer() && (!item.is(Items.TRIDENT) || flag)) {
+                boolean flag1;
+                if (itemDisplayContext != ItemDisplayContext.GUI && !itemDisplayContext.firstPerson() && item.getItem() instanceof BlockItem) {
+                    Block block = ((BlockItem) item.getItem()).getBlock();
+                    flag1 = !(block instanceof HalfTransparentBlock) && !(block instanceof StainedGlassPaneBlock);
+                } else {
+                    flag1 = true;
+                }
+                for (var model : bakedmodel.getRenderPasses(item, flag1)) {
+                    for (var rendertype : model.getRenderTypes(item, flag1)) {
+                        VertexConsumer vertexconsumer;
+                        if (hasAnimatedTexture(item) && item.hasFoil()) {
+                            poseStack.pushPose();
+                            PoseStack.Pose posestack$pose = poseStack.last();
+                            if (itemDisplayContext == ItemDisplayContext.GUI) {
+                                MatrixUtil.mulComponentWise(posestack$pose.pose(), 0.5F);
+                            } else if (itemDisplayContext.firstPerson()) {
+                                MatrixUtil.mulComponentWise(posestack$pose.pose(), 0.75F);
+                            }
+
+                            if (flag1) {
+                                vertexconsumer = ItemRenderer.getCompassFoilBufferDirect(multiBufferSource, rendertype, posestack$pose);
+                            } else {
+                                vertexconsumer = ItemRenderer.getCompassFoilBuffer(multiBufferSource, rendertype, posestack$pose);
+                            }
+
+                            poseStack.popPose();
+                        } else if (flag1) {
+                            vertexconsumer = ItemRenderer.getFoilBufferDirect(multiBufferSource, rendertype, true, item.hasFoil());
+                        } else {
+                            vertexconsumer = ItemRenderer.getFoilBuffer(multiBufferSource, rendertype, true, item.hasFoil());
+                        }
+
+                        RandomSource randomsource = RandomSource.create();
+                        long i = 42L;
+
+                        for (Direction direction : Direction.values()) {
+                            randomsource.setSeed(42L);
+                            this.renderQuadList(poseStack, vertexconsumer, model.getQuads(null, direction, randomsource), item, packedLight, packedOverlay, alpha, itemRenderer);
+                        }
+
+                        randomsource.setSeed(42L);
+                        this.renderQuadList(poseStack, vertexconsumer, model.getQuads(null, null, randomsource), item, packedLight, packedOverlay, alpha, itemRenderer);
+                    }
+                }
+            } else {
+                IClientItemExtensions.of(item).getCustomRenderer().renderByItem(item, itemDisplayContext, poseStack, multiBufferSource, packedLight, packedOverlay);
+            }
+
+            poseStack.popPose();
+        }
+    }
+
+    public void renderQuadList(PoseStack pPoseStack, VertexConsumer pBuffer, List<BakedQuad> pQuads, ItemStack pItemStack, int pCombinedLight, int pCombinedOverlay, float alpha, ItemRenderer itemRenderer) {
+        boolean flag = !pItemStack.isEmpty();
+        PoseStack.Pose posestack$pose = pPoseStack.last();
+
+        for (BakedQuad bakedquad : pQuads) {
+            int i = -1;
+            if (flag && bakedquad.isTinted()) {
+                i = itemRenderer.itemColors.getColor(pItemStack, bakedquad.getTintIndex());
+            }
+
+            float f = (float) (i >> 16 & 255) / 255.0F;
+            float f1 = (float) (i >> 8 & 255) / 255.0F;
+            float f2 = (float) (i & 255) / 255.0F;
+            pBuffer.putBulkData(posestack$pose, bakedquad, f, f1, f2, alpha, pCombinedLight, pCombinedOverlay, true);
+        }
+
+    }
+
+    private static boolean hasAnimatedTexture(ItemStack pStack) {
+        return pStack.is(ItemTags.COMPASSES) || pStack.is(Items.CLOCK);
     }
 }

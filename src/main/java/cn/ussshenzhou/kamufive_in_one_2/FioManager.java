@@ -262,11 +262,13 @@ public class FioManager {
         public static void rotArmAndBroadCast(double dx, double dz) {
             float x = (float) (dx * Math.PI / 180);
             float z = (float) (dz * Math.PI / 180);
-            quatL.rotateAxis(x, 0, 0, 1);
-            quatL.rotateAxis(z, 1, 0, 0);
             if (part == Part.LEFT_ARM) {
+                quatL.rotateAxis(x, 0, 0, 1);
+                quatL.rotateAxis(z, 1, 0, 0);
                 NetworkHelper.sendToServer(new ArmRotPacket(Minecraft.getInstance().player.getUUID(), quatL.x, quatL.y, quatL.z, quatL.w));
             } else if (part == Part.RIGHT_ARM) {
+                quatR.rotateAxis(x, 0, 0, 1);
+                quatR.rotateAxis(z, 1, 0, 0);
                 NetworkHelper.sendToServer(new ArmRotPacket(Minecraft.getInstance().player.getUUID(), quatR.x, quatR.y, quatR.z, quatR.w));
             }
         }

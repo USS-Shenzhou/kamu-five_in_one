@@ -35,7 +35,6 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
     public FioPlayerRenderer(EntityRendererProvider.Context context) {
         super(context, new FioPlayerModel<>(context.bakeLayer(FioPlayerModel.LAYER_LOCATION)), 0.5f);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidArmorModel(context.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)), new HumanoidArmorModel(context.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)), context.getModelManager()));
-        this.addLayer(new FioPlayerItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override
