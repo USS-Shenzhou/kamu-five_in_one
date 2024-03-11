@@ -33,7 +33,7 @@ import java.util.Iterator;
  */
 public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerModel<Player>> {
     public FioPlayerRenderer(EntityRendererProvider.Context context) {
-        super(context, new FioPlayerModel<>(context.bakeLayer(FioPlayerModel.LAYER_LOCATION)), 0.5f);
+        super(context, new FioPlayerModel<>(context.bakeLayer(FioPlayerModel.LAYER_LOCATION)), 0);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidArmorModel(context.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)), new HumanoidArmorModel(context.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)), context.getModelManager()));
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -26,6 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -158,9 +160,9 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             if (modelPart == leftArmF) {
-                poseStack.rotateAround(FioManager.Client.getRotL(partialTick), 4 / 16f, 0, 0);
+                poseStack.rotateAround(FioManager.Client.getRotL(partialTick), 5 / 16f, 0, 0);
             } else if (modelPart == rightArmF) {
-                poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -4 / 16f, 0, 0);
+                poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -5 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
             if (modelPart == leftArmF || modelPart == rightArmF) {
@@ -222,6 +224,9 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
                 }
                 for (var model : bakedmodel.getRenderPasses(item, flag1)) {
                     for (var rendertype : model.getRenderTypes(item, flag1)) {
+                        if (rendertype == Sheets.cutoutBlockSheet() || rendertype == Sheets.solidBlockSheet()) {
+                            rendertype = Sheets.translucentCullBlockSheet();
+                        }
                         VertexConsumer vertexconsumer;
                         if (hasAnimatedTexture(item) && item.hasFoil()) {
                             poseStack.pushPose();

@@ -11,9 +11,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.spongepowered.asm.mixin.*;
 
 /**
  * @author USS_Shenzhou
@@ -60,6 +60,23 @@ public abstract class CameraMixin {
     @Shadow
     private float eyeHeight;
 
+    @Shadow
+    @Final
+    private Quaternionf rotation;
+
+    @Shadow
+    @Final
+    private Vector3f forwards;
+
+    @Shadow
+    @Final
+    private Vector3f up;
+
+    @Shadow
+    @Final
+    private Vector3f left;
+
+
     /**
      * @author
      * @reason
@@ -72,31 +89,57 @@ public abstract class CameraMixin {
         this.detached = detached;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             FioManager.Client.getPart().ifPresentOrElse(part -> {
+                float footOffset = 4 / 16f;
+                var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
                 switch (part) {
                     case HEAD -> {
-                        this.setRotation(entity.getViewYRot(partialTick), entity.getViewXRot(partialTick));
+                        //this.setRotation(entity.getViewYRot(partialTick), entity.getViewXRot(partialTick));
                         this.setPosition(
                                 Mth.lerp(partialTick, entity.xo, entity.getX()),
                                 Mth.lerp(partialTick, entity.yo, entity.getY()) + Mth.lerp(partialTick, this.eyeHeightOld, this.eyeHeight),
                                 Mth.lerp(partialTick, entity.zo, entity.getZ())
                         );
                     }
-                    case RIGHT_FOOT -> {
-                        var y = Mth.lerp(partialTick, entity.yRotO, yRot);
-                        this.setRotation(y, 0);
+                    case LEFT_FOOT -> {
+                        //this.setRotation(bodyY, 0);
                         this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(y * Mth.PI / 180) * 2 / 16,
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 10 / 16f,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(y * Mth.PI / 180) * 2 / 16
+                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * footOffset,
+                                Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
+                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * footOffset
                         );
                     }
-                    case LEFT_FOOT -> {
-                        var y = Mth.lerp(partialTick, entity.yRotO, yRot);
-                        this.setRotation(y, 0);
+                    case RIGHT_FOOT -> {
+                        //this.setRotation(bodyY, 0);
                         this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(y * Mth.PI / 180) * -2 / 16,
+                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * -footOffset,
                                 Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(y * Mth.PI / 180) * -2 / 16
+                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * -footOffset
+                        );
+                    }
+                    case LEFT_ARM -> {
+                        //var rot = FioManager.Client.getRotL(partialTick)
+                        //        .rotateY(bodyY * Mth.PI / 180)
+                        //        .rotateX(90 * Mth.PI / 180);
+                        var original = new Vector3f(5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
+                        //var offset = new Vector3f(-1, -7, 2).mul(1 / 16f).rotate(rot);
+                        //var offset = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(rot);
+                        //-5 22 0
+                        //-1 7 0
+                        this.setPosition(
+                                //Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
+                                //Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
+                                //Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
+                                Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
+                                Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
+                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
+                        );
+                    }
+                    case RIGHT_ARM -> {
+                        var original = new Vector3f(-5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
+                        this.setPosition(
+                                Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
+                                Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
+                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
                         );
                     }
                 }
@@ -128,5 +171,17 @@ public abstract class CameraMixin {
             this.move(0.0D, 0.3D, 0.0D);
         }
 
+    }
+
+    @Unique
+    protected void setRotation(Quaternionf rot) {
+        var euler = rot.getEulerAnglesYXZ(new Vector3f());
+        this.xRot = euler.x / Mth.PI * 180;
+        this.yRot = euler.y / Mth.PI * 180;
+        //this.rotation.rotationYXZ(-pYRot * ((float) Math.PI / 180F), pXRot * ((float) Math.PI / 180F), z * ((float) Math.PI / 180F));
+        this.rotation.set(rot);
+        this.forwards.set(0.0F, 0.0F, 1.0F).rotate(this.rotation);
+        this.up.set(0.0F, 1.0F, 0.0F).rotate(this.rotation);
+        this.left.set(1.0F, 0.0F, 0.0F).rotate(this.rotation);
     }
 }

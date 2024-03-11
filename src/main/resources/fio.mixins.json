@@ -10,9 +10,9 @@
   "client": [
     "CameraMixin",
     "KeyBoardHandlerMixin",
+    "LevelRendererMixin",
     "LocalPlayerMixin",
-    "MouseHandlerMixin",
-    "RenderTypeMixin"
+    "MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
