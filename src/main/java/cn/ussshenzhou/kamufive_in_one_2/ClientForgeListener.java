@@ -32,21 +32,25 @@ public class ClientForgeListener {
                         event.setYaw(bodyY);
                         event.setRoll(0);
                     }
-                    case LEFT_ARM, RIGHT_ARM -> {
-                        //FIXME not entirely right
+                    case LEFT_ARM -> {
                         var rot = FioManager.Client.getRotL(partialTick)
-                                .rotateY(bodyY * Mth.PI / 180)
+                                .rotateZ(90 * Mth.PI / 180)
                                 .rotateX(90 * Mth.PI / 180)
-                                //.getEulerAnglesXYZ(new Vector3f())
-                                //.getEulerAnglesZXY(new Vector3f())
                                 .getEulerAnglesYXZ(new Vector3f())
                                 .mul(180 / Mth.PI);
-                        //.rotateY(bodyY * Mth.PI / 180);
-                        //.rotateYXZ(90 * Mth.PI / 180, 180 * Mth.PI / 180, 0)
-                        //.rotateYXZ(bodyY * Mth.PI / 180, 0, 0);
-                        event.setPitch(rot.x);
+                        event.setPitch(rot.z);
                         event.setYaw(rot.y);
-                        event.setRoll(rot.z);
+                        event.setRoll(rot.x);
+                    }
+                    case RIGHT_ARM -> {
+                        var rot = FioManager.Client.getRotR(partialTick)
+                                .rotateZ(90 * Mth.PI / 180)
+                                .rotateX(90 * Mth.PI / 180)
+                                .getEulerAnglesYXZ(new Vector3f())
+                                .mul(180 / Mth.PI);
+                        event.setPitch(rot.z);
+                        event.setYaw(rot.y);
+                        event.setRoll(rot.x);
                     }
                 }
 

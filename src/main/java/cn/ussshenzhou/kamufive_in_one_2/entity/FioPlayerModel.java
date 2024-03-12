@@ -26,6 +26,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
@@ -160,15 +161,20 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             if (modelPart == leftArmF) {
+                var r = Mth.lerp(partialTick, player.yRotO, player.getYRot());
+                var bodyR = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                poseStack.mulPose(Axis.YN.rotationDegrees(bodyR - r));
                 poseStack.rotateAround(FioManager.Client.getRotL(partialTick), 5 / 16f, 0, 0);
             } else if (modelPart == rightArmF) {
+                var r = Mth.lerp(partialTick, player.yRotO, player.getYRot());
+                var bodyR = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                poseStack.mulPose(Axis.YN.rotationDegrees(bodyR - r));
                 poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -5 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
             if (modelPart == leftArmF || modelPart == rightArmF) {
                 renderItem(player, poseStack, packedLight, packedOverlay, partialTick, modelPart, multiBufferSource, vertexConsumer, alpha);
             }
-
             poseStack.popPose();
         }
     }

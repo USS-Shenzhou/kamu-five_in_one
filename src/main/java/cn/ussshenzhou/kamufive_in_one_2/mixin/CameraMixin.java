@@ -89,6 +89,7 @@ public abstract class CameraMixin {
         this.detached = detached;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             FioManager.Client.getPart().ifPresentOrElse(part -> {
+                if (entity instanceof LivingEntity e){}
                 float footOffset = 4 / 16f;
                 var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
                 switch (part) {
