@@ -89,62 +89,63 @@ public abstract class CameraMixin {
         this.detached = detached;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             FioManager.Client.getPart().ifPresentOrElse(part -> {
-                if (entity instanceof LivingEntity e){}
-                float footOffset = 4 / 16f;
-                var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
-                switch (part) {
-                    case HEAD -> {
-                        //this.setRotation(entity.getViewYRot(partialTick), entity.getViewXRot(partialTick));
-                        this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()),
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + Mth.lerp(partialTick, this.eyeHeightOld, this.eyeHeight),
-                                Mth.lerp(partialTick, entity.zo, entity.getZ())
-                        );
-                    }
-                    case LEFT_FOOT -> {
-                        //this.setRotation(bodyY, 0);
-                        this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * footOffset,
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * footOffset
-                        );
-                    }
-                    case RIGHT_FOOT -> {
-                        //this.setRotation(bodyY, 0);
-                        this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * -footOffset,
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * -footOffset
-                        );
-                    }
-                    case LEFT_ARM -> {
-                        //var rot = FioManager.Client.getRotL(partialTick)
-                        //        .rotateY(bodyY * Mth.PI / 180)
-                        //        .rotateX(90 * Mth.PI / 180);
-                        var original = new Vector3f(5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
-                        //var offset = new Vector3f(-1, -7, 2).mul(1 / 16f).rotate(rot);
-                        //var offset = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(rot);
-                        //-5 22 0
-                        //-1 7 0
-                        this.setPosition(
-                                //Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
-                                //Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
-                                //Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
-                        );
-                    }
-                    case RIGHT_ARM -> {
-                        var original = new Vector3f(-5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
-                        this.setPosition(
-                                Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
-                                Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
-                                Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
-                        );
+                if (entity instanceof LivingEntity e){
+                    float footOffset = 4 / 16f;
+                    //var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
+                    var bodyY = Mth.lerp(partialTick, e.yBodyRotO, e.yBodyRot);
+                    switch (part) {
+                        case HEAD -> {
+                            //this.setRotation(entity.getViewYRot(partialTick), entity.getViewXRot(partialTick));
+                            this.setPosition(
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()),
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + Mth.lerp(partialTick, this.eyeHeightOld, this.eyeHeight),
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ())
+                            );
+                        }
+                        case LEFT_FOOT -> {
+                            //this.setRotation(bodyY, 0);
+                            this.setPosition(
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * footOffset,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * footOffset
+                            );
+                        }
+                        case RIGHT_FOOT -> {
+                            //this.setRotation(bodyY, 0);
+                            this.setPosition(
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * -footOffset,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * -footOffset
+                            );
+                        }
+                        case LEFT_ARM -> {
+                            //var rot = FioManager.Client.getRotL(partialTick)
+                            //        .rotateY(bodyY * Mth.PI / 180)
+                            //        .rotateX(90 * Mth.PI / 180);
+                            var original = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
+                            //var offset = new Vector3f(-1, -7, 2).mul(1 / 16f).rotate(rot);
+                            //var offset = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(rot);
+                            //-5 22 0
+                            //-1 7 0
+                            this.setPosition(
+                                    //Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
+                                    //Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
+                                    //Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
+                            );
+                        }
+                        case RIGHT_ARM -> {
+                            var original = new Vector3f(-5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
+                            this.setPosition(
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
+                            );
+                        }
                     }
                 }
-
             }, () -> {
                 this.setRotation(entity.getViewYRot(partialTick), entity.getViewXRot(partialTick));
                 this.setPosition(

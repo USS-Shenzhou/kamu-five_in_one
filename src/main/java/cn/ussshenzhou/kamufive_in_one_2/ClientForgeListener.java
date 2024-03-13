@@ -34,23 +34,21 @@ public class ClientForgeListener {
                     }
                     case LEFT_ARM -> {
                         var rot = FioManager.Client.getRotL(partialTick)
-                                .rotateZ(90 * Mth.PI / 180)
-                                .rotateX(90 * Mth.PI / 180)
-                                .getEulerAnglesYXZ(new Vector3f())
+                                .rotateLocalX(90 * Mth.PI / 180)
+                                .getEulerAnglesZXY(new Vector3f())
                                 .mul(180 / Mth.PI);
-                        event.setPitch(rot.z);
-                        event.setYaw(rot.y);
-                        event.setRoll(rot.x);
+                        event.setPitch(rot.x);
+                        event.setYaw(rot.z);
+                        event.setRoll(rot.y);
                     }
                     case RIGHT_ARM -> {
                         var rot = FioManager.Client.getRotR(partialTick)
-                                .rotateZ(90 * Mth.PI / 180)
-                                .rotateX(90 * Mth.PI / 180)
-                                .getEulerAnglesYXZ(new Vector3f())
+                                .rotateLocalX(90 * Mth.PI / 180)
+                                .getEulerAnglesZXY(new Vector3f())
                                 .mul(180 / Mth.PI);
-                        event.setPitch(rot.z);
-                        event.setYaw(rot.y);
-                        event.setRoll(rot.x);
+                        event.setPitch(rot.x);
+                        event.setYaw(rot.z);
+                        event.setRoll(rot.y);
                     }
                 }
 

@@ -161,14 +161,11 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             if (modelPart == leftArmF) {
-                var r = Mth.lerp(partialTick, player.yRotO, player.getYRot());
-                var bodyR = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-                poseStack.mulPose(Axis.YN.rotationDegrees(bodyR - r));
-                poseStack.rotateAround(FioManager.Client.getRotL(partialTick), 5 / 16f, 0, 0);
+                var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                poseStack.rotateAround(FioManager.Client.getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), 5 / 16f, 0, 0);
             } else if (modelPart == rightArmF) {
-                var r = Mth.lerp(partialTick, player.yRotO, player.getYRot());
-                var bodyR = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-                poseStack.mulPose(Axis.YN.rotationDegrees(bodyR - r));
+                var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                poseStack.mulPose(Axis.YN.rotationDegrees(bodyRot));
                 poseStack.rotateAround(FioManager.Client.getRotR(partialTick), -5 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
