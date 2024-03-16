@@ -89,7 +89,7 @@ public abstract class CameraMixin {
         this.detached = detached;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             FioManager.Client.getPart().ifPresentOrElse(part -> {
-                if (entity instanceof LivingEntity e){
+                if (entity instanceof LivingEntity e) {
                     float footOffset = 4 / 16f;
                     //var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
                     var bodyY = Mth.lerp(partialTick, e.yBodyRotO, e.yBodyRot);
@@ -106,7 +106,7 @@ public abstract class CameraMixin {
                             //this.setRotation(bodyY, 0);
                             this.setPosition(
                                     Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * footOffset,
-                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + Mth.lerp(partialTick, this.eyeHeightOld, this.eyeHeight) / 16f,
                                     Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * footOffset
                             );
                         }
@@ -114,34 +114,40 @@ public abstract class CameraMixin {
                             //this.setRotation(bodyY, 0);
                             this.setPosition(
                                     Mth.lerp(partialTick, entity.xo, entity.getX()) + Mth.cos(bodyY * Mth.PI / 180) * -footOffset,
-                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getType().getHeight() / 16f,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + Mth.lerp(partialTick, this.eyeHeightOld, this.eyeHeight) / 16f,
                                     Mth.lerp(partialTick, entity.zo, entity.getZ()) + Mth.sin(bodyY * Mth.PI / 180) * -footOffset
                             );
                         }
                         case LEFT_ARM -> {
-                            //var rot = FioManager.Client.getRotL(partialTick)
-                            //        .rotateY(bodyY * Mth.PI / 180)
-                            //        .rotateX(90 * Mth.PI / 180);
-                            var original = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
-                            //var offset = new Vector3f(-1, -7, 2).mul(1 / 16f).rotate(rot);
-                            //var offset = new Vector3f(0, 0, 0).mul(1 / 16f).rotate(rot);
-                            //-5 22 0
-                            //-1 7 0
+                            var original = new Vector3f(5, 24, 0)
+                                    .mul(1 / 16f)
+                                    .rotate(Axis.YN.rotationDegrees(bodyY));
+                            var rot = FioManager.Client.getRotL(partialTick)
+                                    .rotateLocalX(Mth.PI);
+                            var offset = new Vector3f(1, 0, -2.5f)
+                                    .mul(1 / 16f)
+                                    .rotate(Axis.ZN.rotationDegrees(bodyY))
+                                    .rotate(rot);
                             this.setPosition(
-                                    //Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
-                                    //Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
-                                    //Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
-                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
-                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
-                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
                             );
                         }
                         case RIGHT_ARM -> {
-                            var original = new Vector3f(-5.5f, 26, 0).mul(1 / 16f).rotate(Axis.YP.rotationDegrees(bodyY));
+                            var original = new Vector3f(-5, 24, 0)
+                                    .mul(1 / 16f)
+                                    .rotate(Axis.YN.rotationDegrees(bodyY));
+                            var rot = FioManager.Client.getRotR(partialTick)
+                                    .rotateLocalX(-Mth.PI);
+                            var offset = new Vector3f(-1, 0, -2.5f)
+                                    .mul(1 / 16f)
+                                    .rotate(Axis.ZN.rotationDegrees(bodyY))
+                                    .rotate(rot);
                             this.setPosition(
-                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x,
-                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y,
-                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z
+                                    Mth.lerp(partialTick, entity.xo, entity.getX()) + original.x + offset.x,
+                                    Mth.lerp(partialTick, entity.yo, entity.getY()) + original.y + offset.y,
+                                    Mth.lerp(partialTick, entity.zo, entity.getZ()) + original.z + offset.z
                             );
                         }
                     }
