@@ -37,9 +37,6 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     public void render(Player player, float pEntityYaw, float pPartialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        if (FioManagerClient.getInstanceClient().mainPlayer == null || !FioManagerClient.getInstanceClient().mainPlayer.equals(player.getUUID())) {
-            return;
-        }
 
         if (!MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre<>(player, this, pPartialTicks, poseStack, multiBufferSource, packedLight))) {
             poseStack.pushPose();

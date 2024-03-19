@@ -1,5 +1,6 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,9 +23,11 @@ public class RenderForgeListener {
         }
         event.setCanceled(true);
         var player = event.getEntity();
-        fioPlayerRenderer.render(player,
-                Mth.lerp(event.getPartialTick(), player.yRotO, player.getYRot()),
-                event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight()
-        );
+        if (FioManagerClient.getInstanceClient().mainPlayer != null && FioManagerClient.getInstanceClient().mainPlayer.equals(player.getUUID())) {
+            fioPlayerRenderer.render(player,
+                    Mth.lerp(event.getPartialTick(), player.yRotO, player.getYRot()),
+                    event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight()
+            );
+        }
     }
 }

@@ -146,25 +146,26 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         if (uuid == null) {
             return;
         }
-        var player = ((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(uuid));
-        if (player == null) {
+        var partOwner = ((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(uuid));
+        if (partOwner == null) {
             return;
         }
-        var location = player.getSkinTextureLocation();
+        var location = partOwner.getSkinTextureLocation();
         var vertexConsumer = multiBufferSource.getBuffer(this.renderType(location));
         float alpha = part == FioManagerClient.getInstanceClient().part ? 0.2f : 1;
+        var headOwner = FioManagerClient.getInstanceClient().getPlayerClient(Part.HEAD).orElse(partOwner);
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             if (modelPart == leftArmF) {
-                var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                var bodyRot = Mth.lerp(partialTick, headOwner.yBodyRotO, headOwner.yBodyRot);
                 poseStack.rotateAround(FioManagerClient.getInstanceClient().getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), 5 / 16f, 0, 0);
             } else if (modelPart == rightArmF) {
-                var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+                var bodyRot = Mth.lerp(partialTick, headOwner.yBodyRotO, headOwner.yBodyRot);
                 poseStack.rotateAround(FioManagerClient.getInstanceClient().getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), -5 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
             if (modelPart == leftArmF || modelPart == rightArmF) {
-                renderItem(player, poseStack, packedLight, packedOverlay, partialTick, modelPart, multiBufferSource, vertexConsumer, alpha);
+                renderItem(partOwner, poseStack, packedLight, packedOverlay, partialTick, modelPart, multiBufferSource, vertexConsumer, alpha);
             }
             poseStack.popPose();
         }

@@ -144,4 +144,14 @@ public class FioManager {
         }
         return Optional.ofNullable(playerParts.inverse().get(player.getUUID()));
     }
+
+    public Optional<ServerPlayer> getPlayerServer(Part part) {
+        try {
+            return Optional.ofNullable(server.getPlayerList().getPlayer(playerParts.get(part)));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+    }
+
+
 }

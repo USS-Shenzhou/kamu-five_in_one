@@ -6,6 +6,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -134,5 +135,13 @@ public class FioManagerClient extends FioManager {
                 quatR.set(x, y, z, w);
             }
         });
+    }
+
+    public Optional<AbstractClientPlayer> getPlayerClient(Part part) {
+        try {
+            return Optional.ofNullable((AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(playerParts.get(part)));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
     }
 }
