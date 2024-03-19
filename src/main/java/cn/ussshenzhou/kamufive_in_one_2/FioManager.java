@@ -27,6 +27,7 @@ import java.util.UUID;
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FioManager {
+    @SuppressWarnings("AlibabaConstantFieldShouldBeUpperCase")
     private static final FioManager instanceServer = new FioManager();
 
     public static FioManager getInstanceServer() {
@@ -43,9 +44,9 @@ public class FioManager {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ServerTickEvent event) {
-        if (server == null) {
-            server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
+    public static void onTick(TickEvent.ServerTickEvent event) {
+        if (instanceServer.server == null) {
+            instanceServer.server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
         }
         /*if (event.phase == TickEvent.Phase.END) {
             return;

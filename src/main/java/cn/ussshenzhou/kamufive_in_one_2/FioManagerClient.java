@@ -24,6 +24,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class FioManagerClient extends FioManager {
 
+    @SuppressWarnings("AlibabaConstantFieldShouldBeUpperCase")
     private static final FioManagerClient instanceClient = new FioManagerClient();
 
     public static FioManagerClient getInstanceClient() {
@@ -66,41 +67,6 @@ public class FioManagerClient extends FioManager {
         return part == Part.LEFT_FOOT || part == Part.RIGHT_FOOT;
     }
 
-    @Override
-    public boolean isArm(@Nullable Player player) {
-        if (player == null) {
-            return false;
-        }
-        var part = playerParts.inverse().get(player.getUUID());
-        return part == Part.LEFT_ARM || part == Part.RIGHT_ARM;
-    }
-
-    @Override
-    public boolean isHead(@Nullable Player player) {
-        if (player == null) {
-            return false;
-        }
-        var part = playerParts.inverse().get(player.getUUID());
-        return part == Part.HEAD;
-    }
-
-    @Override
-    public boolean isFoot(@Nullable Player player) {
-        if (player == null) {
-            return false;
-        }
-        var part = playerParts.inverse().get(player.getUUID());
-        return part == Part.LEFT_FOOT || part == Part.RIGHT_FOOT;
-    }
-
-    @Override
-    public Optional<Part> getPart(@Nullable Player player) {
-        if (player == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(playerParts.inverse().get(player.getUUID()));
-    }
-
     public Optional<Part> getPart() {
         return Optional.ofNullable(part);
     }
@@ -118,12 +84,12 @@ public class FioManagerClient extends FioManager {
     public Quaternionf quatR = new Quaternionf().rotateLocalX(-Mth.PI / 2);
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             return;
         }
-        prevQuatL.set(quatL);
-        prevQuatR.set(quatR);
+        instanceClient.prevQuatL.set(instanceClient.quatL);
+        instanceClient.prevQuatR.set(instanceClient.quatR);
     }
 
     public Quaternionf getRotL(float partialTick) {
