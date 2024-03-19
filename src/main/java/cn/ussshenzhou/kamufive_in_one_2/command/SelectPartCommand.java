@@ -39,7 +39,7 @@ public class SelectPartCommand {
     }
 
     private static int setPart(CommandContext<CommandSourceStack> commandContext, Part part) {
-        FioManager.selectPart(commandContext.getSource(), part);
+        FioManager.getInstanceServer().selectPart(commandContext.getSource(), part);
         return Command.SINGLE_SUCCESS;
     }
 }

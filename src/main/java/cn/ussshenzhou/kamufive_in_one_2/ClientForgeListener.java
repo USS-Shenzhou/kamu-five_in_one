@@ -19,7 +19,7 @@ public class ClientForgeListener {
         var entity = event.getCamera().getEntity();
         var partialTick = (float) event.getPartialTick();
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-            FioManager.Client.getPart().ifPresentOrElse(part -> {
+            FioManagerClient.getInstanceClient().getPart().ifPresentOrElse(part -> {
                 var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
                 switch (part) {
                     case HEAD -> {
@@ -33,7 +33,7 @@ public class ClientForgeListener {
                         event.setRoll(0);
                     }
                     case LEFT_ARM -> {
-                        var rot = FioManager.Client.getRotL(partialTick)
+                        var rot = FioManagerClient.getInstanceClient().getRotL(partialTick)
                                 .rotateLocalX(90 * Mth.PI / 180)
                                 .getEulerAnglesZXY(new Vector3f())
                                 .mul(180 / Mth.PI);
@@ -42,7 +42,7 @@ public class ClientForgeListener {
                         event.setRoll(rot.y);
                     }
                     case RIGHT_ARM -> {
-                        var rot = FioManager.Client.getRotR(partialTick)
+                        var rot = FioManagerClient.getInstanceClient().getRotR(partialTick)
                                 .rotateLocalX(90 * Mth.PI / 180)
                                 .getEulerAnglesZXY(new Vector3f())
                                 .mul(180 / Mth.PI);

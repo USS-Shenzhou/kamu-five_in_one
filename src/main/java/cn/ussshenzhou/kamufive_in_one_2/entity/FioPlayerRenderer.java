@@ -1,9 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
-import cn.ussshenzhou.kamufive_in_one_2.FioManager;
-import cn.ussshenzhou.t88.T88;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -11,10 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -25,8 +20,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.util.Iterator;
 
 /**
  * @author USS_Shenzhou
@@ -44,7 +37,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     public void render(Player player, float pEntityYaw, float pPartialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        if (FioManager.Client.mainPlayer == null || !FioManager.Client.mainPlayer.equals(player.getUUID())) {
+        if (FioManagerClient.getInstanceClient().mainPlayer == null || !FioManagerClient.getInstanceClient().mainPlayer.equals(player.getUUID())) {
             return;
         }
 
@@ -144,7 +137,7 @@ public class FioPlayerRenderer extends LivingEntityRenderer<Player, FioPlayerMod
 
     @Override
     protected void renderNameTag(Player player, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        if (FioManager.Client.mainPlayer == null || !FioManager.Client.mainPlayer.equals(player.getUUID())) {
+        if (FioManagerClient.getInstanceClient().mainPlayer == null || !FioManagerClient.getInstanceClient().mainPlayer.equals(player.getUUID())) {
             return;
         }
 

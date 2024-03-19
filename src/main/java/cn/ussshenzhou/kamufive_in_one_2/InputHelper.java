@@ -34,8 +34,8 @@ public class InputHelper {
     }
 
     public static boolean inGame() {
-        return FioManager.Client.mainPlayer != null
-                && FioManager.Client.part != null
+        return FioManagerClient.getInstanceClient().mainPlayer != null
+                && FioManagerClient.getInstanceClient().part != null
                 && Minecraft.getInstance().screen == null
                 && Minecraft.getInstance().player != null;
     }

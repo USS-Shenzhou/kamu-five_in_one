@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2.network;
 
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import cn.ussshenzhou.t88.network.annotation.Consumer;
 import cn.ussshenzhou.t88.network.annotation.Decoder;
 import cn.ussshenzhou.t88.network.annotation.Encoder;
@@ -59,11 +60,11 @@ public class ArmRotPacket {
     }
 
     private void serverHandler(NetworkEvent.Context context) {
-        FioManager.broadCastExcept(this, context.getSender().getUUID());
+        FioManager.getInstanceServer().broadCastExcept(this, context.getSender().getUUID());
     }
 
     @OnlyIn(Dist.CLIENT)
     private void clientHandler(NetworkEvent.Context context) {
-        FioManager.Client.rotArmRaw(from, x, y, z, w);
+        FioManagerClient.getInstanceClient().rotArmRaw(from, x, y, z, w);
     }
 }

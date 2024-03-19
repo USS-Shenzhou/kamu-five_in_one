@@ -1,6 +1,6 @@
 package cn.ussshenzhou.kamufive_in_one_2.mixin;
 
-import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import cn.ussshenzhou.kamufive_in_one_2.InputHelper;
 import cn.ussshenzhou.kamufive_in_one_2.network.MouseMoveRelayPacket;
 import cn.ussshenzhou.kamufive_in_one_2.network.MousePressRelayPacket;
@@ -49,11 +49,11 @@ public class MouseHandlerMixin {
 
     @Inject(method = "onPress", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;getWindow()J", ordinal = 0, shift = At.Shift.AFTER), cancellable = true)
     private void interceptMousePress(long pWindowPointer, int pButton, int pAction, int pModifiers, CallbackInfo ci) {
-        if (FioManager.Client.mainPlayer != null
-                && FioManager.Client.part != null
+        if (FioManagerClient.getInstanceClient().mainPlayer != null
+                && FioManagerClient.getInstanceClient().part != null
                 && Minecraft.getInstance().screen == null
                 //needCheck
-                && !FioManager.Client.isMainPlayer(Minecraft.getInstance().player)) {
+                && !FioManagerClient.getInstanceClient().isMainPlayer(Minecraft.getInstance().player)) {
             if (Minecraft.getInstance().player != null) {
                 NetworkHelper.sendToServer(new MousePressRelayPacket(Minecraft.getInstance().player.getUUID(), pButton, pAction, pModifiers));
                 ci.cancel();
@@ -64,11 +64,11 @@ public class MouseHandlerMixin {
     @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
     @Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;getWindow()J", ordinal = 0, shift = At.Shift.AFTER), cancellable = true)
     private void interceptMouseScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
-        if (FioManager.Client.mainPlayer != null
-                && FioManager.Client.part != null
+        if (FioManagerClient.getInstanceClient().mainPlayer != null
+                && FioManagerClient.getInstanceClient().part != null
                 && Minecraft.getInstance().screen == null
                 //needCheck
-                && !FioManager.Client.isMainPlayer(Minecraft.getInstance().player)) {
+                && !FioManagerClient.getInstanceClient().isMainPlayer(Minecraft.getInstance().player)) {
             if (Minecraft.getInstance().player != null) {
                 NetworkHelper.sendToServer(new MouseScrollRelayPacket(Minecraft.getInstance().player.getUUID(), pXOffset, pYOffset));
                 ci.cancel();
@@ -80,9 +80,9 @@ public class MouseHandlerMixin {
     private void interceptMouseMove(long pWindowPointer, double pXpos, double pYpos, CallbackInfo ci) {
         if (InputHelper.inGame()) {
             //noinspection DataFlowIssue
-            switch (FioManager.Client.part) {
+            switch (FioManagerClient.getInstanceClient().part) {
                 case HEAD -> {
-                    if (FioManager.Client.isMainPlayer()) {
+                    if (FioManagerClient.getInstanceClient().isMainPlayer()) {
                         //turn to vanilla local turnPlayer.
                     } else {
                         //send to main player to execute turning
@@ -123,7 +123,7 @@ public class MouseHandlerMixin {
                     //    d3 = dy * d6;
                     //}
 
-                    FioManager.Client.rotArmAndBroadCast(d2, d3);
+                    FioManagerClient.getInstanceClient().rotArmAndBroadCast(d2, d3);
                     ci.cancel();
                     break;
                 }

@@ -1,6 +1,6 @@
 package cn.ussshenzhou.kamufive_in_one_2.mixin;
 
-import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.*;
@@ -88,7 +87,7 @@ public abstract class CameraMixin {
         this.entity = entity;
         this.detached = detached;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-            FioManager.Client.getPart().ifPresentOrElse(part -> {
+            FioManagerClient.getInstanceClient().getPart().ifPresentOrElse(part -> {
                 if (entity instanceof LivingEntity e) {
                     float footOffset = 4 / 16f;
                     //var bodyY = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
@@ -122,7 +121,7 @@ public abstract class CameraMixin {
                             var original = new Vector3f(5, 24, 0)
                                     .mul(1 / 16f)
                                     .rotate(Axis.YN.rotationDegrees(bodyY));
-                            var rot = FioManager.Client.getRotL(partialTick)
+                            var rot = FioManagerClient.getInstanceClient().getRotL(partialTick)
                                     .rotateLocalX(Mth.PI);
                             var offset = new Vector3f(1, 0, -2.5f)
                                     .mul(1 / 16f)
@@ -138,7 +137,7 @@ public abstract class CameraMixin {
                             var original = new Vector3f(-5, 24, 0)
                                     .mul(1 / 16f)
                                     .rotate(Axis.YN.rotationDegrees(bodyY));
-                            var rot = FioManager.Client.getRotR(partialTick)
+                            var rot = FioManagerClient.getInstanceClient().getRotR(partialTick)
                                     .rotateLocalX(-Mth.PI);
                             var offset = new Vector3f(-1, 0, -2.5f)
                                     .mul(1 / 16f)

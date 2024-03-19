@@ -1,9 +1,8 @@
 package cn.ussshenzhou.kamufive_in_one_2.entity;
 
-import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import cn.ussshenzhou.kamufive_in_one_2.FiveInOne;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -15,20 +14,17 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -38,7 +34,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HalfTransparentBlock;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
@@ -147,7 +142,7 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
     }
 
     private void renderPart(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay, float partialTick, Part part, ModelPart... modelParts) {
-        var uuid = FioManager.Client.playerPartsClient.get(part);
+        var uuid = FioManagerClient.getInstanceClient().playerParts.get(part);
         if (uuid == null) {
             return;
         }
@@ -157,15 +152,15 @@ public class FioPlayerModel<T extends Player> extends HumanoidModel<T> {
         }
         var location = player.getSkinTextureLocation();
         var vertexConsumer = multiBufferSource.getBuffer(this.renderType(location));
-        float alpha = part == FioManager.Client.part ? 0.2f : 1;
+        float alpha = part == FioManagerClient.getInstanceClient().part ? 0.2f : 1;
         for (ModelPart modelPart : modelParts) {
             poseStack.pushPose();
             if (modelPart == leftArmF) {
                 var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-                poseStack.rotateAround(FioManager.Client.getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), 5 / 16f, 0, 0);
+                poseStack.rotateAround(FioManagerClient.getInstanceClient().getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), 5 / 16f, 0, 0);
             } else if (modelPart == rightArmF) {
                 var bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-                poseStack.rotateAround(FioManager.Client.getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), -5 / 16f, 0, 0);
+                poseStack.rotateAround(FioManagerClient.getInstanceClient().getRotL(partialTick).rotateLocalY(-bodyRot * Mth.PI / 180), -5 / 16f, 0, 0);
             }
             modelPart.render(poseStack, vertexConsumer, packedLight, packedOverlay, 1, 1, 1, alpha);
             if (modelPart == leftArmF || modelPart == rightArmF) {

@@ -1,6 +1,7 @@
 package cn.ussshenzhou.kamufive_in_one_2.network;
 
 import cn.ussshenzhou.kamufive_in_one_2.FioManager;
+import cn.ussshenzhou.kamufive_in_one_2.FioManagerClient;
 import cn.ussshenzhou.kamufive_in_one_2.Part;
 import cn.ussshenzhou.t88.network.annotation.Consumer;
 import cn.ussshenzhou.t88.network.annotation.Decoder;
@@ -61,18 +62,18 @@ public class SelectPartPacket {
         assert localMc.level != null;
         var selector = (AbstractClientPlayer) localMc.level.getPlayerByUUID(selectorUUID);
         var mainPlayer = (AbstractClientPlayer) localMc.level.getPlayerByUUID(mainPlayerUUID);
-        var map = FioManager.Client.playerPartsClient;
+        var map = FioManagerClient.getInstanceClient().playerParts;
         map.remove(map.inverse().get(selectorUUID));
         map.put(part, selectorUUID);
         assert localMc.player != null;
-        FioManager.Client.mainPlayer = mainPlayerUUID;
+        FioManagerClient.getInstanceClient().mainPlayer = mainPlayerUUID;
         if (selectorUUID.equals(localMc.player.getUUID())) {
-            FioManager.Client.part = part;
+            FioManagerClient.getInstanceClient().part = part;
             //noinspection DataFlowIssue
             //localMc.setCameraEntity(mainPlayer);
         }
         if (selector != mainPlayer && selector != null) {
-            selector.setBoundingBox(FioManager.ZERO);
+            selector.setBoundingBox(FioManager.getInstanceServer().ZERO);
         }
     }
 }

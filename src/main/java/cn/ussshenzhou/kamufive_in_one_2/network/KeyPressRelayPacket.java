@@ -62,7 +62,7 @@ public class KeyPressRelayPacket {
     }
 
     private void serverHandler() {
-        FioManager.relayToMain(this);
+        FioManager.getInstanceServer().relayToMain(this);
     }
 
     @OnlyIn(Dist.CLIENT)
